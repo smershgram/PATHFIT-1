@@ -48,18 +48,62 @@ button {
 
 .desktop {
   position: relative;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
   background:
-    linear-gradient(135deg, rgba(255,255,255,0.08) 0 1px, transparent 1px 42px),
-    linear-gradient(315deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 42px),
-    #25324a;
-  background-size: 42px 42px, 42px 42px, auto;
-  top: 22px;
+    radial-gradient(circle at 72% 12%, rgba(111, 185, 255, 0.28), transparent 34%),
+    radial-gradient(circle at 18% 86%, rgba(111, 91, 205, 0.22), transparent 32%),
+    linear-gradient(145deg, #18243c 0%, #2d4166 46%, #1e2945 100%);
+  top: 0;
+  left: 0;
+}
+
+.desktop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(120deg, transparent 0 42%, rgba(255,255,255,0.04) 50%, transparent 58%);
+  opacity: 0.7;
+}
+
+.mac-menu-bar {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  height: 30px;
+  padding: 0 16px;
+  background: rgba(15, 22, 37, 0.76);
+  border-bottom: 1px solid rgba(255,255,255,0.16);
+  color: #f5f8ff;
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  backdrop-filter: blur(16px);
+}
+
+.mac-menu-logo {
+  color: #fff;
+  font-size: 13px;
+}
+
+.mac-menu-spacer {
+  flex: 1;
+}
+
+.desktop-icons {
+  position: absolute;
+  z-index: 1;
+  top: 48px;
   left: 22px;
   display: grid;
-  gap: 18px;
+  align-content: start;
+  gap: 12px;
   width: 92px;
 }
 
@@ -112,28 +156,38 @@ button {
 
 .window-stage {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: grid;
   place-items: center;
   width: 100%;
-  height: calc(100% - 52px);
-  padding: 14px 48px 10px 132px;
+  height: calc(100% - 30px);
+  padding: 54px 28px 76px 120px;
+  pointer-events: none;
+}
+
+.window-stage .browser-window {
+  pointer-events: auto;
 }
 
 .taskbar {
   position: absolute;
   z-index: 3;
-  right: 0;
+  right: 50%;
   bottom: 0;
-  left: 0;
+  left: auto;
   display: flex;
   align-items: center;
   height: 52px;
   gap: 10px;
-  padding: 7px 14px;
-  border-top: 2px solid rgba(10,18,32,0.75);
-  background: rgba(19, 28, 46, 0.92);
+  padding: 7px 12px;
+  border: 1px solid rgba(255,255,255,0.22);
+  border-bottom: 0;
+  border-radius: 18px 18px 0 0;
+  background: rgba(14, 21, 37, 0.68);
   color: #edf4ff;
+  transform: translateX(50%);
+  box-shadow: 0 0 24px rgba(0,0,0,0.28);
+  backdrop-filter: blur(18px);
 }
 
 .launcher-button,
@@ -163,7 +217,7 @@ button {
   align-items: center;
   gap: 9px;
   padding: 0 14px;
-  background: rgba(255,255,255,0.13);
+  background: rgba(255,255,255,0.1);
   font-size: 11px;
   font-weight: 700;
 }
@@ -197,8 +251,8 @@ button {
 
 .browser-window {
   position: relative;
-  width: min(1280px, 96vw);
-  height: calc(100vh - 20px);
+  width: min(1120px, calc(100vw - 220px));
+  height: calc(100vh - 144px);
   max-height: none;
   background: rgba(255,255,255,0.14);
   border: 2px solid rgba(35, 35, 35, 0.18);
@@ -207,7 +261,7 @@ button {
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
   resize: both;
   min-width: 620px;
-  min-height: 460px;
+  min-height: 440px;
 }
 
 .browser-topbar {
@@ -288,7 +342,7 @@ button {
 .browser-window.is-fullscreen {
   position: fixed;
   z-index: 10;
-  inset: 0 0 52px;
+  inset: 30px 0 52px;
   width: auto !important;
   height: auto !important;
   min-width: 0;
@@ -332,14 +386,23 @@ button {
 .dot {
   width: 12px;
   height: 12px;
+  padding: 0;
   border-radius: 50%;
   display: inline-block;
   border: 1px solid rgba(0,0,0,0.3);
+  cursor: pointer;
 }
 
 .dot.red { background: #ff6157; }
 .dot.yellow { background: #ffc12f; }
 .dot.green { background: #28ca42; }
+
+.dot:hover,
+.dot:focus-visible {
+  filter: brightness(0.88);
+  outline: 2px solid rgba(0,0,0,0.24);
+  outline-offset: 2px;
+}
 
 .browser-center {
   display: flex;
@@ -379,7 +442,7 @@ button {
   display: flex;
   flex-direction: column;
   background: var(--bg);
-  padding: 8px 16px 8px;
+  padding: 8px 14px 10px;
   overflow: hidden;
 }
 
@@ -425,6 +488,59 @@ button {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
   max-width: 980px;
+}
+
+.quiz-summary {
+  max-width: 980px;
+  margin-top: 18px;
+  padding: 12px 16px;
+  border: 3px solid var(--line);
+  border-radius: 12px;
+  background: #fff7d6;
+  box-shadow: var(--shadow);
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+.unit-picker {
+  max-width: 980px;
+  margin-top: 18px;
+  padding: 14px 18px;
+  border: 3px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.unit-picker > span {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.unit-picker-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.unit-option {
+  min-width: 110px;
+  padding: 10px 14px;
+  border: 3px solid var(--line);
+  border-radius: 12px;
+  background: #f2f4ee;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.unit-option.is-selected {
+  background: var(--green);
 }
 
 .feature-card {
@@ -540,7 +656,7 @@ button {
   background: #f6f4f3;
   border: 3px solid var(--line);
   border-radius: 18px;
-  min-height: 88px;
+  min-height: 78px;
   display: flex;
   align-items: center;
   padding: 10px 16px;
@@ -721,7 +837,7 @@ button {
   border: 3px solid var(--line);
   border-radius: 18px;
   box-shadow: 0 4px 0 #1d1d1d;
-  padding: 28px 44px;
+  padding: 20px 32px 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -729,36 +845,80 @@ button {
 }
 
 .quiz-copy {
-  width: min(100%, 840px);
+  width: min(100%, 820px);
 }
 
 .quiz-copy h2 {
-  margin: 0 0 16px;
-  font-size: clamp(1.9rem, 3vw, 3.2rem);
+  margin: 0 0 12px;
+  font-size: clamp(1.8rem, 2.7vw, 2.7rem);
   font-weight: 900;
 }
 
 .quiz-question {
-  margin: 0 0 24px;
-  font-size: clamp(1.2rem, 1.8vw, 1.7rem);
+  margin: 0 0 18px;
+  font-size: clamp(1.1rem, 1.7vw, 1.6rem);
   line-height: 1.3;
   font-weight: 800;
 }
 
 .quiz-options {
   display: grid;
-  gap: 16px;
+  gap: 10px;
+}
+
+.quiz-identification-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 800;
+}
+
+.quiz-identification {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.quiz-answer {
+  flex: 1;
+  min-width: 0;
+  min-height: 52px;
+  padding: 14px 18px;
+  border: 3px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: clamp(1rem, 1.3vw, 1.25rem);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.quiz-submit {
+  min-width: 170px;
+  padding: 12px 16px;
+  border: 3px solid var(--line);
+  border-radius: 12px;
+  background: var(--green);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.quiz-submit:disabled {
+  cursor: default;
+  opacity: 0.7;
 }
 
 .quiz-option {
   width: 100%;
-  padding: 18px 20px;
+  padding: 14px 18px;
   border: 3px solid var(--line);
   border-radius: 12px;
   background: #fff;
   color: var(--ink);
   text-align: left;
-  font-size: clamp(1rem, 1.35vw, 1.3rem);
+  font-size: clamp(0.95rem, 1.2vw, 1.2rem);
   line-height: 1.25;
   font-weight: 700;
   cursor: pointer;
@@ -780,6 +940,29 @@ button {
   min-height: 1.4em;
   margin: 14px 0 0;
   font-weight: 800;
+}
+
+.quiz-answer-reveal {
+  display: none;
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.quiz-answer-reveal.is-visible {
+  display: block;
+}
+
+.quiz-answer-reveal.is-correct {
+  background: #c9f2b9;
+}
+
+.quiz-answer-reveal.is-incorrect {
+  background: #ffd1d1;
 }
 
 .movement-figure {
@@ -1043,6 +1226,10 @@ button {
     display: none;
   }
 
+  .mac-menu-bar {
+    display: none;
+  }
+
   .window-stage {
     height: calc(100% - 28px);
     padding: 0;
@@ -1106,6 +1293,19 @@ button {
     border-radius: 18px 18px 0 0;
   }
 
+  .lesson-shell.is-home {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .lesson-shell.is-home .app-home {
+    flex: 0 0 auto;
+    min-height: 100%;
+    justify-content: flex-start;
+    padding-top: 18px;
+    padding-bottom: 20px;
+  }
+
   .progress-row {
     gap: 5px;
     padding: 0 2px 6px;
@@ -1118,13 +1318,13 @@ button {
 
   .score-pill {
     min-width: 0;
-    padding: 5px 7px;
+    padding: 6px 8px;
     border-radius: 9px;
-    font-size: 9px;
+    font-size: 10px;
   }
 
   .score-pill.clip-counter {
-    min-width: 68px;
+    min-width: 74px;
   }
 
   .headline-panel {
@@ -1135,18 +1335,18 @@ button {
 
   .unit-tag {
     margin-bottom: 4px;
-    font-size: 9px;
+    font-size: 10px;
   }
 
   .headline-copy h1 {
-    font-size: clamp(1.6rem, 4.8vw, 2.3rem) !important;
+    font-size: clamp(1.85rem, 6vw, 2.6rem) !important;
     line-height: 1.05;
   }
 
   .headline-copy p {
     margin-top: 4px;
-    font-size: clamp(0.95rem, 2.2vw, 1.2rem) !important;
-    line-height: 1.2;
+    font-size: clamp(1.05rem, 4vw, 1.3rem) !important;
+    line-height: 1.3;
   }
 
   .content-panel {
@@ -1155,32 +1355,36 @@ button {
     gap: 6px;
     padding: 8px;
     border-radius: 12px;
-    overflow: hidden;
+    overflow-y: auto;
   }
 
   .left-copy {
     padding: 1px 3px 0;
     height: 100%;
-    overflow: hidden;
+    min-height: 100%;
+    flex: 1 0 auto;
+    overflow: visible;
   }
 
   .left-copy h2 {
-    margin-bottom: 5px;
-    font-size: clamp(1.7rem, 4.4vw, 2.25rem) !important;
+    margin-bottom: 8px;
+    font-size: clamp(2rem, 5.5vw, 2.6rem) !important;
   }
 
   .left-copy ul,
   .slide.is-dense .left-copy ul,
   .slide.is-very-dense .left-copy ul {
-    gap: 5px;
+    flex: 1 0 auto;
+    justify-content: space-evenly;
+    gap: 10px;
   }
 
   .left-copy li,
   .slide.is-dense .left-copy li,
   .slide.is-very-dense .left-copy li,
   .browser-window.is-fullscreen .left-copy li {
-    font-size: clamp(0.86rem, 2.7vw, 1.05rem) !important;
-    line-height: 1.08;
+    font-size: clamp(1.1rem, 4.5vw, 1.35rem) !important;
+    line-height: 1.3;
   }
 
   .right-art {
@@ -1198,33 +1402,71 @@ button {
   }
 
   .quiz-panel {
-    padding: 16px 12px;
+    padding: 20px 16px;
     border-radius: 12px;
-    overflow: hidden;
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+
+  .quiz-copy {
+    width: 100%;
+    flex: 0 0 auto;
+    margin-block: auto;
   }
 
   .quiz-copy h2 {
-    margin-bottom: 9px;
-    font-size: 1.45rem;
+    margin-bottom: 12px;
+    font-size: 1.6rem;
   }
 
   .quiz-question {
-    margin-bottom: 12px;
-    font-size: 0.9rem;
+    margin-bottom: 20px;
+    font-size: clamp(1.15rem, 4.5vw, 1.35rem);
+    line-height: 1.4;
   }
 
   .quiz-options {
-    gap: 8px;
+    gap: 10px;
   }
 
   .quiz-option {
-    padding: 10px 11px;
-    font-size: 0.78rem;
+    min-height: 56px;
+    padding: 12px 14px;
+    font-size: clamp(1.05rem, 4vw, 1.2rem);
+    line-height: 1.35;
+  }
+
+  .quiz-identification {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-answer {
+    width: 100%;
+    min-height: 56px;
+    padding: 12px 14px;
+    font-size: 1rem;
+  }
+
+  .quiz-submit {
+    width: 100%;
+    min-height: 54px;
+    font-size: 0.95rem;
+  }
+
+  .quiz-feedback:empty {
+    display: none;
   }
 
   .quiz-feedback {
     margin-top: 9px;
-    font-size: 0.78rem;
+    font-size: 1rem;
+    line-height: 1.35;
+  }
+
+  .quiz-answer-reveal {
+    font-size: 0.95rem;
+    line-height: 1.4;
   }
 
   .bottom-actions {
@@ -1243,7 +1485,7 @@ button {
     width: 50%;
     height: 42px;
     border-radius: 11px;
-    font-size: 0.65rem;
+    font-size: 0.78rem;
   }
 
   .taskbar {

@@ -18,6 +18,19 @@
   </head>
   <body>
     <div class="desktop">
+      <header class="mac-menu-bar" aria-label="Desktop menu">
+        <span class="mac-menu-logo">◆</span>
+        <strong>PATHFIT 1</strong>
+        <span>File</span>
+        <span>Edit</span>
+        <span>View</span>
+        <span>Window</span>
+        <span>Help</span>
+        <span class="mac-menu-spacer"></span>
+        <span>◌ Wi-Fi</span>
+        <span>🔋 100%</span>
+        <span class="desktop-clock">9:41 PM</span>
+      </header>
       <aside class="desktop-icons" aria-label="Desktop apps">
         <button class="desktop-icon" type="button" aria-label="PATHFIT 1 lesson app">
           <span class="desktop-icon-art">▦</span>
@@ -31,6 +44,10 @@
           <span class="desktop-icon-art quiz-art">?</span>
           <span>LONG QUIZ</span>
         </button>
+        <button class="desktop-icon" id="quizIcon" type="button" aria-label="Open quiz">
+          <span class="desktop-icon-art quiz-art">?</span>
+          <span>QUIZ</span>
+        </button>
       </aside>
 
       <div class="window-stage">
@@ -38,10 +55,10 @@
           <header class="browser-topbar">
         <div class="browser-left">
           <button class="nav-icon" aria-label="Back">←</button>
-          <div class="dot-group">
-            <span class="dot red"></span>
-            <span class="dot yellow"></span>
-            <span class="dot green"></span>
+          <div class="dot-group" aria-label="Window controls">
+            <button class="dot red" id="trafficClose" type="button" aria-label="Close window"></button>
+            <button class="dot yellow" id="trafficMinimize" type="button" aria-label="Minimize window"></button>
+            <button class="dot green" id="trafficMaximize" type="button" aria-label="Fullscreen window"></button>
           </div>
         </div>
 
@@ -77,14 +94,30 @@
             </button>
             <button class="feature-card" id="openQuizButton" type="button">
               <span class="feature-icon">?</span>
+              <strong>Quiz</strong>
+              <small>Answer a unit-specific checkpoint set.</small>
+            </button>
+            <button class="feature-card" id="openLongQuizButton" type="button">
+              <span class="feature-icon">?</span>
               <strong>Long Quiz</strong>
-              <small>Test what you have learned.</small>
+              <small>Take the full quiz without lesson navigation.</small>
             </button>
             <button class="feature-card" id="openCourseMapButton" type="button">
               <span class="feature-icon">▦</span>
               <strong>Course Map</strong>
               <small>See the PATHFIT sequence.</small>
             </button>
+          </div>
+
+          <div class="quiz-summary" id="quizSummary" hidden>Quiz complete — Mistakes: 0</div>
+
+          <div class="unit-picker" aria-label="Select a quiz unit">
+            <span>Choose Unit</span>
+            <div class="unit-picker-buttons">
+              <button class="unit-option is-selected" type="button" data-unit="UNIT I" aria-pressed="true">UNIT I</button>
+              <button class="unit-option" type="button" data-unit="UNIT II" aria-pressed="false">UNIT II</button>
+              <button class="unit-option" type="button" data-unit="UNIT III" aria-pressed="false">UNIT III</button>
+            </div>
           </div>
         </section>
 

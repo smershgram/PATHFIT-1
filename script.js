@@ -9,15 +9,22 @@ const lessonShell = document.querySelector('.lesson-shell');
 const appTopbar = document.querySelector('.browser-topbar');
 const maximizeWindow = document.getElementById('maximizeWindow');
 const closeWindow = document.getElementById('closeWindow');
+const trafficClose = document.getElementById('trafficClose');
+const trafficMinimize = document.getElementById('trafficMinimize');
+const trafficMaximize = document.getElementById('trafficMaximize');
 const taskbarApp = document.querySelector('.taskbar-app');
 const desktopAppIcon = document.querySelector('.desktop-icon');
 const longQuizIcon = document.getElementById('longQuizIcon');
+const quizIcon = document.getElementById('quizIcon');
+const quizSummary = document.getElementById('quizSummary');
 const androidBack = document.getElementById('androidBack');
 const androidHome = document.getElementById('androidHome');
 const androidOverview = document.getElementById('androidOverview');
 const startLessonsButton = document.getElementById('startLessonsButton');
 const openQuizButton = document.getElementById('openQuizButton');
+const openLongQuizButton = document.getElementById('openLongQuizButton');
 const openCourseMapButton = document.getElementById('openCourseMapButton');
+const courseFilesIcon = document.querySelector('.desktop-icon[aria-label="Course files"]');
 
 const slidesData = [
   {
@@ -867,39 +874,181 @@ function paginateSlides(sourceSlides) {
   return paginatedSlides;
 }
 
+const identificationQuestions = {
+  'UNIT I': [
+    ['The modern approach to Physical Education that shifts the focus from mere physical fitness to holistic development through physical activities.', 'EDUCATION THROUGH MOVEMENT'],
+    ['The philosopher who wrote, "the greatest of follies is to neglect one’s health for any advantage in life."', 'SCHOPENHAUER'],
+    ['The year Physical Education became mandatory in all public schools.', '1920'],
+    ['The year MAPE was introduced in the Philippine curriculum.', '1982'],
+    ['The function of Physical Education that enhances growth and development by promoting healthy body movement patterns.', 'BIOLOGICAL FUNCTION'],
+    ['The function of Physical Education that integrates personality traits such as self-discipline, resilience, and teamwork.', 'INTEGRATIVE FUNCTION'],
+    ['The function of Physical Education that transmits values and standards, promoting cooperation and inclusivity.', 'SOCIAL FUNCTION'],
+    ['The CHED Memorandum Order that sets guidelines for teaching Physical Education in the general education curriculum.', 'CMO NO. 40'],
+    ['The leading risk factor for global mortality identified by WHO in 2010 (fourth overall).', 'PHYSICAL INACTIVITY'],
+    ['The recommended daily minutes of moderate-to-vigorous physical activity for children aged 5–17.', '60 MINUTES']
+  ],
+  'UNIT II': [
+    ['The proponent of movement education in the early 20th century.', 'RUDOLF LABAN'],
+    ['Bones that are cube-like, equal in length, width, and thickness.', 'SHORT BONES'],
+    ['The only sesamoid bones found in every person.', 'PATELLAE'],
+    ['Bones that act as levers and move when muscles contract.', 'LONG BONES'],
+    ['The type of joint that restricts motion to only a few degrees, found in the spine.', 'SLIGHTLY MOVABLE JOINTS'],
+    ['The plane that divides the body into right and left parts.', 'MID-SAGITTAL (MEDIAN) PLANE'],
+    ['The plane that divides the body into anterior and posterior portions.', 'CORONAL (FRONTAL) PLANE'],
+    ['The plane that divides the body into upper and lower sections.', 'TRANSVERSE (HORIZONTAL) PLANE'],
+    ['Movement of a body segment away from the midline of the body.', 'ABDUCTION'],
+    ['Rotation of the hand and forearm resulting in a palm-down position.', 'PRONATION'],
+    ['The type of muscle tissue found only in the heart.', 'CARDIAC MUSCLE'],
+    ['The type of contraction where the muscle develops tension with no change in overall length.', 'ISOMETRIC CONTRACTION'],
+    ['The muscle role that equalizes or nullifies one or more actions of another muscle.', 'NEUTRALIZER'],
+    ['The muscle role that must relax to allow a movement to occur.', 'ANTAGONIST'],
+    ['The type of contraction where the muscle lengthens while developing tension.', 'ECCENTRIC CONTRACTION']
+  ],
+  'UNIT III': [
+    ['The ability to perform one’s daily tasks efficiently without undue fatigue but with extra "reserve" in case of emergency.', 'PHYSICAL FITNESS'],
+    ['Refers to the soundness of the heart and lungs, contributing to the ability to resist diseases.', 'ORGANIC VIGOR'],
+    ['The ability of the muscle to release maximum force in the shortest period of time.', 'POWER'],
+    ['The ability to change direction or position in space with quickness and lightness of movement.', 'AGILITY'],
+    ['The proportion of lean body mass to fat body mass.', 'BODY COMPOSITION'],
+    ['The somatotype characterized by soft roundness and large digestive viscera.', 'ENDOMORPHIC'],
+    ['The somatotype characterized by a lean and small body build with slender limbs.', 'ECTOMORPHIC'],
+    ['The system of classifying an individual according to body shape, developed by Sheldon.', 'SOMATOTYPING'],
+    ['The cardiovascular variable that refers to how long the exercise will be performed.', 'DURATION'],
+    ['The principle stating that fitness gains diminish when exercise is discontinued.', 'PRINCIPLE OF REVERSIBILITY'],
+    ['The principle recognizing that individuals respond differently to exercise due to age, gender, fitness level, and health status.', 'PRINCIPLE OF INDIVIDUAL VARIATION'],
+    ['The health-related component referring to the ability of the muscles and joints to go through a full range of motion.', 'FLEXIBILITY'],
+    ['The performance-related component referring to the ability to maintain equilibrium.', 'BALANCE'],
+    ['The type of contraction where muscles are exposed to fixed machines with variable resistance equal to the force applied.', 'ISOKINETIC CONTRACTION'],
+    ['The number of bones that compose the adult skeleton.', '206']
+  ]
+};
+
+const multipleChoiceQuestions = {
+  'UNIT I': [
+    ['The modern approach to Physical Education that shifts the focus from mere physical fitness to holistic development through physical activities.', ['Education of the physical', 'Education through movement', 'Drill and calisthenics', 'Physical training'], 1],
+    ['The philosopher who wrote, “the greatest of follies is to neglect one’s health for any advantage in life.”', ['Aristotle', 'Plato', 'Schopenhauer', 'Kant'], 2],
+    ['The year Physical Education became mandatory in all public schools.', ['1901', '1920', '1937', '1969'], 1],
+    ['The year MAPE was introduced in the Philippine curriculum.', ['1969', '1975', '1982', '1987'], 2],
+    ['The function of Physical Education that enhances growth and development by promoting healthy body movement patterns.', ['Biological function', 'Integrative function', 'Social function', 'Aesthetic function'], 0],
+    ['The function of Physical Education that integrates personality traits such as self-discipline, resilience, and teamwork.', ['Biological function', 'Integrative function', 'Social function', 'Nationalism function'], 1],
+    ['The function of Physical Education that transmits values and standards, promoting cooperation and inclusivity.', ['Biological function', 'Integrative function', 'Social function', 'Conservation function'], 2],
+    ['The CHED Memorandum Order that sets guidelines for teaching Physical Education in the general education curriculum.', ['CMO No. 39', 'CMO No. 40', 'CMO No. 19', 'CMO No. 21'], 1],
+    ['The leading risk factor for global mortality identified by WHO in 2010 (fourth overall).', ['Physical inactivity', 'Poor nutrition', 'Tobacco use', 'Alcohol use'], 0],
+    ['The recommended daily minutes of moderate-to-vigorous physical activity for children aged 5–17.', ['30 minutes', '45 minutes', '60 minutes', '90 minutes'], 2]
+  ],
+  'UNIT II': [
+    ['The proponent of movement education in the early 20th century.', ['John Dewey', 'Rudolf Laban', 'William Sheldon', 'Carmen Andin'], 1],
+    ['Bones that are cube-like, equal in length, width, and thickness.', ['Long bones', 'Short bones', 'Flat bones', 'Irregular bones'], 1],
+    ['The only sesamoid bones found in every person.', ['Patellae', 'Carpals', 'Tarsals', 'Vertebrae'], 0],
+    ['Bones that act as levers and move when muscles contract.', ['Long bones', 'Short bones', 'Flat bones', 'Sesamoid bones'], 0],
+    ['The type of joint that restricts motion to only a few degrees, found in the spine.', ['Immovable joints', 'Slightly movable joints', 'Free movable joints', 'Synovial joints'], 1],
+    ['The plane that divides the body into right and left parts.', ['Coronal plane', 'Transverse plane', 'Mid-sagittal plane', 'Oblique plane'], 2],
+    ['The plane that divides the body into anterior and posterior portions.', ['Coronal (frontal) plane', 'Transverse plane', 'Mid-sagittal plane', 'Oblique plane'], 0],
+    ['The plane that divides the body into upper and lower sections.', ['Coronal plane', 'Transverse (horizontal) plane', 'Mid-sagittal plane', 'Frontal plane'], 1],
+    ['Movement of a body segment away from the midline of the body.', ['Adduction', 'Abduction', 'Flexion', 'Extension'], 1],
+    ['Rotation of the hand and forearm resulting in a palm-down position.', ['Supination', 'Pronation', 'Inversion', 'Eversion'], 1],
+    ['The type of muscle tissue found only in the heart.', ['Skeletal muscle', 'Smooth muscle', 'Cardiac muscle', 'Voluntary muscle'], 2],
+    ['The type of contraction where the muscle develops tension with no change in overall length.', ['Isotonic', 'Concentric', 'Eccentric', 'Isometric'], 3],
+    ['The muscle role that equalizes or nullifies one or more actions of another muscle.', ['Agonist', 'Antagonist', 'Stabilizer', 'Neutralizer'], 3],
+    ['The muscle role that must relax to allow a movement to occur.', ['Agonist', 'Antagonist', 'Stabilizer', 'Neutralizer'], 1],
+    ['The type of contraction where the muscle lengthens while developing tension.', ['Concentric', 'Eccentric', 'Isometric', 'Isokinetic'], 1]
+  ],
+  'UNIT III': [
+    ['The ability to perform one’s daily tasks efficiently without undue fatigue but with extra “reserve” in case of emergency.', ['Physical fitness', 'Organic vigor', 'Endurance', 'Power'], 0],
+    ['Refers to the soundness of the heart and lungs, contributing to the ability to resist diseases.', ['Endurance', 'Organic vigor', 'Strength', 'Power'], 1],
+    ['The ability of the muscle to release maximum force in the shortest period of time.', ['Strength', 'Power', 'Endurance', 'Flexibility'], 1],
+    ['The ability to change direction or position in space with quickness and lightness of movement.', ['Balance', 'Speed', 'Agility', 'Coordination'], 2],
+    ['The proportion of lean body mass to fat body mass.', ['Body composition', 'Flexibility', 'Muscular endurance', 'Cardiovascular endurance'], 0],
+    ['The somatotype characterized by soft roundness and large digestive viscera.', ['Ectomorphic', 'Mesomorphic', 'Endomorphic', 'Morphic'], 2],
+    ['The somatotype characterized by a lean and small body build with slender limbs.', ['Ectomorphic', 'Mesomorphic', 'Endomorphic', 'Morphic'], 0],
+    ['The system of classifying an individual according to body shape, developed by Sheldon.', ['Somatotyping', 'Kinesiology', 'Biomechanics', 'Anthropometry'], 0],
+    ['The cardiovascular variable that refers to how long the exercise will be performed.', ['Intensity', 'Duration', 'Frequency', 'Mode'], 1],
+    ['The principle stating that fitness gains diminish when exercise is discontinued.', ['Principle of Recovery', 'Principle of Reversibility', 'Principle of Individual Variation', 'Principle of Progressive Overload'], 1],
+    ['The principle recognizing that individuals respond differently to exercise due to age, gender, fitness level, and health status.', ['Principle of Recovery', 'Principle of Reversibility', 'Principle of Individual Variation', 'Principle of Specificity'], 2],
+    ['The health-related component referring to the ability of the muscles and joints to go through a full range of motion.', ['Flexibility', 'Body composition', 'Muscular endurance', 'Cardiovascular endurance'], 0],
+    ['The performance-related component referring to the ability to maintain equilibrium.', ['Coordination', 'Balance', 'Agility', 'Speed'], 1],
+    ['The type of contraction where muscles are exposed to fixed machines with variable resistance equal to the force applied.', ['Isotonic', 'Isometric', 'Isokinetic', 'Eccentric'], 2],
+    ['The number of bones that compose the adult skeleton.', ['106', '206', '306', '406'], 1]
+  ]
+};
+
 function createCheckpointSlides(lessonPages) {
   const checkpointSlides = [];
   const unitNames = [...new Set(lessonPages.map((slide) => slide.unit))]
     .filter((unit) => /^UNIT\s+[IVX]+$/.test(unit));
 
+  function shuffleQuestions(questions) {
+    const shuffled = [...questions];
+
+    for (let index = shuffled.length - 1; index > 0; index -= 1) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+    }
+
+    for (let index = 1; index < shuffled.length; index += 1) {
+      const previousQuestion = shuffled[index - 1].question.trim().toLowerCase();
+      if (shuffled[index].question.trim().toLowerCase() !== previousQuestion) continue;
+
+      const alternativeIndex = shuffled.findIndex((question, candidateIndex) =>
+        candidateIndex > index && question.question.trim().toLowerCase() !== previousQuestion
+      );
+
+      if (alternativeIndex >= 0) {
+        [shuffled[index], shuffled[alternativeIndex]] = [shuffled[alternativeIndex], shuffled[index]];
+      }
+    }
+
+    return shuffled;
+  }
+
   unitNames.forEach((unit) => {
     if (unit === 'CLOSING') return;
 
     const unitPages = lessonPages.filter((slide) => slide.unit === unit);
-    const questionCount = Math.max(1, unitPages.length);
-    const bulletPool = unitPages.flatMap((slide) => slide.bullets);
+    const identificationBank = identificationQuestions[unit] || [];
+    const multipleChoiceBank = multipleChoiceQuestions[unit] || [];
+    const combinedBank = [];
 
-    for (let questionIndex = 0; questionIndex < questionCount; questionIndex += 1) {
-      const lessonPage = unitPages[questionIndex];
-      const correctAnswer = lessonPage.bullets[questionIndex % lessonPage.bullets.length];
-      const distractors = bulletPool.filter((bullet) => bullet !== correctAnswer).slice(0, 2);
-      const options = [correctAnswer, ...distractors];
-
-      for (let optionIndex = options.length - 1; optionIndex > 0; optionIndex -= 1) {
-        const randomIndex = Math.floor(Math.random() * (optionIndex + 1));
-        [options[optionIndex], options[randomIndex]] = [options[randomIndex], options[optionIndex]];
+    for (let i = 0; i < Math.max(identificationBank.length, multipleChoiceBank.length); i += 1) {
+      if (i < identificationBank.length) {
+        combinedBank.push({
+          type: 'identification',
+          question: identificationBank[i][0],
+          answer: identificationBank[i][1],
+          explanation: `The answer is ${identificationBank[i][1]}.`
+        });
       }
+      if (i < multipleChoiceBank.length) {
+        const [prompt, options, correctIndex] = multipleChoiceBank[i];
+        combinedBank.push({
+          type: 'multiple-choice',
+          question: prompt,
+          options,
+          correctIndex,
+          answer: options[correctIndex],
+          explanation: `The correct answer is ${options[correctIndex]}.`
+        });
+      }
+    }
 
+    const mixedBank = shuffleQuestions(combinedBank);
+    const questionCount = mixedBank.length || 1;
+
+    mixedBank.forEach((questionItem, questionIndex) => {
+      const lessonPage = unitPages[questionIndex % unitPages.length] || unitPages[0];
       checkpointSlides.push({
         type: 'quiz',
+        questionType: questionItem.type,
         unit,
         title: `${unit} CHECKPOINT`,
         text: `Question ${questionIndex + 1} of ${questionCount}`,
-        question: `Which statement was covered in ${lessonPage.title}?`,
-        options,
-        correctIndex: options.indexOf(correctAnswer)
+        question: questionItem.question,
+        options: questionItem.options || [questionItem.answer],
+        correctIndex: questionItem.correctIndex ?? 0,
+        answer: questionItem.answer,
+        explanation: questionItem.explanation || `This was covered in ${lessonPage.title} as part of ${unit}.`
       });
-    }
+    });
   });
 
   return checkpointSlides;
@@ -908,6 +1057,7 @@ function createCheckpointSlides(lessonPages) {
 const lessonSlides = paginateSlides(slidesData);
 const slideSequence = [];
 const lessonUnits = [...new Set(lessonSlides.map((slide) => slide.unit))];
+const selectedUnitQuiz = { value: 'UNIT I' };
 
 lessonUnits.forEach((unit) => {
   const unitSlides = lessonSlides.filter((slide) => slide.unit === unit);
@@ -920,6 +1070,14 @@ let isTransitioning = false;
 let isLongQuizMode = false;
 let slides = [];
 let quizSlideIndexes = [];
+let mistakeCount = 0;
+
+function resetQuizDeckState() {
+  isTransitioning = false;
+  activeSlide = 0;
+  quizSlideIndexes = [];
+  slides = [];
+}
 
 const imageThemes = [
   {
@@ -1031,6 +1189,8 @@ function buildSlides() {
     section.dataset.slide = String(index);
     section.dataset.answered = slideData.type === 'quiz' ? 'false' : 'true';
     if (slideData.type === 'quiz') section.dataset.correctIndex = String(slideData.correctIndex);
+    if (slideData.type === 'quiz') section.dataset.answer = slideData.answer || '';
+    if (slideData.type === 'quiz') section.dataset.explanation = slideData.explanation || '';
     section.setAttribute('aria-hidden', index === 0 ? 'false' : 'true');
 
     const accentColors = ['#f5d5b9', '#c9efff', '#dff7d7', '#f9e7f7', '#dffcf6', '#fff3d8', '#ffe4ef', '#e5f2ff', '#f9ead6'];
@@ -1047,14 +1207,27 @@ function buildSlides() {
 
         <div class="quiz-panel">
           <div class="quiz-copy">
-            <h2>Checkpoint Quiz</h2>
             <p class="quiz-question">${slideData.question}</p>
-            <div class="quiz-options">
-              ${slideData.options.map((option, optionIndex) => `
-                <button class="quiz-option" data-option="${optionIndex}">${option}</button>
-              `).join('')}
-            </div>
+            ${slideData.questionType === 'identification'
+              ? `
+                <label class="quiz-identification-label" for="answer-${index}">Type your answer</label>
+                <div class="quiz-identification">
+                  <input id="answer-${index}" class="quiz-answer" type="text" autocomplete="off"
+                    placeholder="TYPE YOUR ANSWER IN CAPITAL LETTERS">
+                  <button class="quiz-submit" type="button">CHECK ANSWER</button>
+                </div>
+              `
+              : `
+                <div class="quiz-options">
+                  ${slideData.options.map((option, optionIndex) => `
+                    <button class="quiz-option" data-option="${optionIndex}">${option}</button>
+                  `).join('')}
+                </div>
+              `}
             <p class="quiz-feedback" aria-live="polite"></p>
+            ${slideData.questionType === 'identification'
+              ? '<p class="quiz-answer-reveal" aria-live="polite"></p>'
+              : ''}
           </div>
         </div>
       `;
@@ -1096,15 +1269,21 @@ function updateLessonChrome() {
   const displayPosition = isLongQuizMode && quizPosition >= 0 ? quizPosition + 1 : activeSlide + 1;
   const displayTotal = isLongQuizMode ? quizSlideIndexes.length : slides.length;
   const progress = (displayPosition / displayTotal) * 100;
+  const activeQuiz = slides[activeSlide]?.classList.contains('quiz-slide');
+  const unansweredQuiz = activeQuiz && slides[activeSlide].dataset.answered !== 'true';
+  const isLastQuiz = isLongQuizMode && quizPosition === quizSlideIndexes.length - 1;
+  const isLastSlide = activeSlide === slides.length - 1;
+
   progressFill.style.width = `${progress}%`;
   backButton.disabled = isLongQuizMode
     ? quizPosition <= 0
     : activeSlide === 0;
-  continueButton.textContent = isLongQuizMode && quizPosition === quizSlideIndexes.length - 1
+  continueButton.textContent = isLastQuiz || isLastSlide
     ? 'FINISH ✓'
-    : activeSlide === slides.length - 1 ? 'FINISH ✓' : 'CONTINUE ▶';
-  const activeQuiz = slides[activeSlide]?.classList.contains('quiz-slide');
-  continueButton.disabled = activeQuiz && slides[activeSlide].dataset.answered !== 'true';
+    : unansweredQuiz
+      ? 'NEXT ▶'
+      : 'CONTINUE ▶';
+  continueButton.disabled = false;
   clipCurrent.textContent = String(displayPosition);
   clipTotal.textContent = String(displayTotal);
 
@@ -1141,25 +1320,167 @@ function showSlide(nextSlide, direction) {
 
 buildSlides();
 
-function openLongQuiz() {
-  const firstQuizSlide = quizSlideIndexes[0];
-  if (typeof firstQuizSlide !== 'number') return;
+function getUnitQuizSlides(unitName = selectedUnitQuiz.value) {
+  const unitSlides = lessonSlides.filter((slide) => slide.unit === unitName);
+  const checkpointSlides = createCheckpointSlides(unitSlides);
+  return checkpointSlides;
+}
 
-  resetQuizSession();
+function showUnitQuiz(unitName = selectedUnitQuiz.value) {
+  resetQuizResults();
+  resetQuizDeckState();
+  selectedUnitQuiz.value = unitName;
+  const unitQuizSlides = getUnitQuizSlides(unitName);
+
+  if (!unitQuizSlides.length) return;
+
+  slidesContainer.innerHTML = '';
+
+  unitQuizSlides.forEach((slideData, index) => {
+    const section = document.createElement('section');
+    section.className = `slide${index === 0 ? ' is-active' : ''} quiz-slide`;
+    section.dataset.slide = String(index);
+    section.dataset.answered = 'false';
+    section.dataset.correctIndex = String(slideData.correctIndex);
+    section.dataset.answer = slideData.answer || '';
+    section.dataset.explanation = slideData.explanation || '';
+    section.setAttribute('aria-hidden', index === 0 ? 'false' : 'true');
+
+    section.innerHTML = `
+      <div class="headline-panel">
+        <div class="headline-copy">
+          <div class="unit-tag">${slideData.unit}</div>
+          <h1>${slideData.title}</h1>
+          <p>${slideData.text}</p>
+        </div>
+      </div>
+
+      <div class="quiz-panel">
+        <div class="quiz-copy">
+          <p class="quiz-question">${slideData.question}</p>
+          ${slideData.questionType === 'identification'
+            ? `
+              <label class="quiz-identification-label" for="answer-${index}">Type your answer</label>
+              <div class="quiz-identification">
+                <input id="answer-${index}" class="quiz-answer" type="text" autocomplete="off"
+                  placeholder="TYPE YOUR ANSWER IN CAPITAL LETTERS">
+                <button class="quiz-submit" type="button">CHECK ANSWER</button>
+              </div>
+            `
+            : `
+              <div class="quiz-options">
+                ${slideData.options.map((option, optionIndex) => `
+                  <button class="quiz-option" data-option="${optionIndex}">${option}</button>
+                `).join('')}
+              </div>
+            `}
+          <p class="quiz-feedback" aria-live="polite"></p>
+          ${slideData.questionType === 'identification'
+            ? '<p class="quiz-answer-reveal" aria-live="polite"></p>'
+            : ''}
+        </div>
+      </div>
+    `;
+    slidesContainer.appendChild(section);
+  });
+
+  slides = Array.from(document.querySelectorAll('.slide'));
+  quizSlideIndexes = slides.map((slide, index) => index);
+  activeSlide = 0;
+  slides.forEach((slide, index) => {
+    slide.classList.toggle('is-active', index === 0);
+    slide.setAttribute('aria-hidden', index === 0 ? 'false' : 'true');
+  });
+
   lessonShell.classList.remove('is-home');
+  lessonShell.scrollTop = 0;
   restoreWindow();
-  appWindow.classList.remove('is-fullscreen');
   isLongQuizMode = true;
-  slides[activeSlide].classList.remove('is-active');
-  slides[activeSlide].setAttribute('aria-hidden', 'true');
-  slides[firstQuizSlide].classList.add('is-active');
-  slides[firstQuizSlide].setAttribute('aria-hidden', 'false');
-  activeSlide = firstQuizSlide;
   updateLessonChrome();
 }
 
-function openLessonApp() {
+function openLongQuiz() {
+  resetQuizResults();
+  resetQuizDeckState();
+  const allQuizSlides = [];
+  lessonUnits.forEach((unit) => {
+    allQuizSlides.push(...getUnitQuizSlides(unit));
+  });
+
+  if (!allQuizSlides.length) return;
+
+  slidesContainer.innerHTML = '';
+  allQuizSlides.forEach((slideData, index) => {
+    const section = document.createElement('section');
+    section.className = `slide${index === 0 ? ' is-active' : ''} quiz-slide`;
+    section.dataset.slide = String(index);
+    section.dataset.answered = 'false';
+    section.dataset.correctIndex = String(slideData.correctIndex);
+    section.dataset.answer = slideData.answer || '';
+    section.dataset.explanation = slideData.explanation || '';
+    section.setAttribute('aria-hidden', index === 0 ? 'false' : 'true');
+
+    section.innerHTML = `
+      <div class="headline-panel">
+        <div class="headline-copy">
+          <div class="unit-tag">${slideData.unit}</div>
+          <h1>${slideData.title}</h1>
+          <p>${slideData.text}</p>
+        </div>
+      </div>
+
+      <div class="quiz-panel">
+        <div class="quiz-copy">
+          <p class="quiz-question">${slideData.question}</p>
+          ${slideData.questionType === 'identification'
+            ? `
+              <label class="quiz-identification-label" for="answer-${index}">Type your answer</label>
+              <div class="quiz-identification">
+                <input id="answer-${index}" class="quiz-answer" type="text" autocomplete="off"
+                  placeholder="TYPE YOUR ANSWER IN CAPITAL LETTERS">
+                <button class="quiz-submit" type="button">CHECK ANSWER</button>
+              </div>
+            `
+            : `
+              <div class="quiz-options">
+                ${slideData.options.map((option, optionIndex) => `
+                  <button class="quiz-option" data-option="${optionIndex}">${option}</button>
+                `).join('')}
+              </div>
+            `}
+          <p class="quiz-feedback" aria-live="polite"></p>
+          ${slideData.questionType === 'identification'
+            ? '<p class="quiz-answer-reveal" aria-live="polite"></p>'
+            : ''}
+        </div>
+      </div>
+    `;
+    slidesContainer.appendChild(section);
+  });
+
+  slides = Array.from(document.querySelectorAll('.slide'));
+  quizSlideIndexes = slides.map((slide, index) => index);
+  activeSlide = 0;
   lessonShell.classList.remove('is-home');
+  lessonShell.scrollTop = 0;
+  restoreWindow();
+  ['position', 'left', 'top', 'width', 'height', 'margin'].forEach((property) => {
+    appWindow.style.removeProperty(property);
+  });
+  appWindow.classList.remove('is-fullscreen');
+  isLongQuizMode = true;
+  updateLessonChrome();
+}
+
+function openQuiz() {
+  showUnitQuiz(selectedUnitQuiz.value);
+}
+
+function openLessonApp() {
+  resetQuizDeckState();
+  buildSlides();
+  lessonShell.classList.remove('is-home');
+  lessonShell.scrollTop = 0;
   restoreWindow();
   isLongQuizMode = false;
 
@@ -1171,7 +1492,7 @@ function openLessonApp() {
     maximizeWindow.setAttribute('aria-label', 'Restore window');
   }
 
-  if (activeSlide !== 0) {
+  if (slides.length && activeSlide !== 0) {
     slides[activeSlide].classList.remove('is-active');
     slides[activeSlide].setAttribute('aria-hidden', 'true');
     slides[0].classList.add('is-active');
@@ -1182,44 +1503,63 @@ function openLessonApp() {
   updateLessonChrome();
 }
 
-function showAppHome() {
-  resetQuizSession();
-  isLongQuizMode = false;
-  lessonShell.classList.add('is-home');
+function showQuizSummary() {
+  if (!quizSummary) return;
+  quizSummary.hidden = false;
+  quizSummary.textContent = `Quiz complete — Mistakes: ${mistakeCount}`;
 }
 
-function resetQuizSession() {
-  quizSlideIndexes.forEach((quizIndex) => {
-    const quizSlide = slides[quizIndex];
-    const optionsContainer = quizSlide.querySelector('.quiz-options');
-    const options = Array.from(optionsContainer.querySelectorAll('.quiz-option'));
-    const correctOption = options[Number(quizSlide.dataset.correctIndex)];
+function resetQuizResults() {
+  mistakeCount = 0;
+  clearQuizSummary();
+}
 
-    for (let optionIndex = options.length - 1; optionIndex > 0; optionIndex -= 1) {
-      const randomIndex = Math.floor(Math.random() * (optionIndex + 1));
-      [options[optionIndex], options[randomIndex]] = [options[randomIndex], options[optionIndex]];
-    }
+function clearQuizSummary() {
+  if (!quizSummary) return;
+  quizSummary.hidden = true;
+  quizSummary.textContent = 'Quiz complete — Mistakes: 0';
+}
 
-    options.forEach((option) => {
-      option.classList.remove('is-correct', 'is-incorrect');
-      option.disabled = false;
-      optionsContainer.appendChild(option);
-    });
-
-    quizSlide.dataset.answered = 'false';
-    quizSlide.dataset.correctIndex = String(options.indexOf(correctOption));
-    quizSlide.querySelector('.quiz-feedback').textContent = '';
-  });
+function showAppHome(preserveQuizSummary = false) {
+  resetQuizDeckState();
+  if (!preserveQuizSummary) resetQuizResults();
+  isLongQuizMode = false;
+  lessonShell.classList.add('is-home');
+  lessonShell.scrollTop = 0;
 }
 
 function openCourseMap() {
+  buildSlides();
   const courseMapIndex = slideSequence.findIndex((slide) => slide.title === 'PHYSICAL EDUCATION CURRICULUM MAP');
   if (courseMapIndex < 0) return;
   lessonShell.classList.remove('is-home');
+  lessonShell.scrollTop = 0;
   showSlide(courseMapIndex, 'forward');
 }
 
 slidesContainer.addEventListener('click', (event) => {
+  const submitButton = event.target.closest('.quiz-submit');
+  if (submitButton) {
+    const quizSlide = submitButton.closest('.quiz-slide');
+    const answer = quizSlide.querySelector('.quiz-answer');
+    const expectedAnswer = quizSlide.dataset.answer;
+    const normalizedUser = answer.value.trim().replace(/\s+/g, ' ');
+    const normalizedExpected = expectedAnswer.trim().replace(/\s+/g, ' ');
+    const isCorrect = normalizedUser === normalizedExpected;
+    if (!isCorrect) mistakeCount += 1;
+    quizSlide.querySelector('.quiz-feedback').textContent = isCorrect
+      ? 'Correct. You may continue.'
+      : 'Answer submitted. Review the correct answer, then continue.';
+    const answerReveal = quizSlide.querySelector('.quiz-answer-reveal');
+    answerReveal.textContent = `Correct answer: ${expectedAnswer} Explanation: ${quizSlide.dataset.explanation}`;
+    answerReveal.classList.add('is-visible', isCorrect ? 'is-correct' : 'is-incorrect');
+    quizSlide.dataset.answered = 'true';
+    answer.disabled = true;
+    submitButton.disabled = true;
+    updateLessonChrome();
+    return;
+  }
+
   const option = event.target.closest('.quiz-option');
   if (!option) return;
 
@@ -1229,6 +1569,7 @@ slidesContainer.addEventListener('click', (event) => {
   const options = Array.from(quizSlide.querySelectorAll('.quiz-option'));
   const selectedIndex = Number(option.dataset.option);
   const isCorrect = selectedIndex === Number(quizSlide.dataset.correctIndex);
+  if (!isCorrect) mistakeCount += 1;
   option.classList.add(isCorrect ? 'is-correct' : 'is-incorrect');
   quizSlide.querySelector('.quiz-feedback').textContent = isCorrect
     ? 'Correct. You may continue.'
@@ -1243,10 +1584,31 @@ slidesContainer.addEventListener('click', (event) => {
   }
 });
 
+slidesContainer.addEventListener('input', (event) => {
+  if (!event.target.matches('.quiz-answer')) return;
+  event.target.value = event.target.value.toUpperCase();
+});
+
 backButton.addEventListener('click', () => showSlide(activeSlide - 1, 'back'));
-continueButton.addEventListener('click', () => showSlide(activeSlide + 1, 'forward'));
+continueButton.addEventListener('click', () => {
+  const isLastQuiz = isLongQuizMode && quizSlideIndexes.length > 0 && activeSlide === quizSlideIndexes[quizSlideIndexes.length - 1];
+  const isLastSlide = !isLongQuizMode && slides.length > 0 && activeSlide === slides.length - 1;
+
+  if (isLastQuiz) {
+    showQuizSummary();
+    showAppHome(true);
+    return;
+  }
+  if (isLastSlide) {
+    showAppHome();
+    return;
+  }
+
+  showSlide(activeSlide + 1, 'forward');
+});
 
 window.addEventListener('keydown', (event) => {
+  if (event.target.matches('input, textarea, select, button')) return;
   if (event.key === 'ArrowRight') showSlide(activeSlide + 1, 'forward');
   if (event.key === 'ArrowLeft') showSlide(activeSlide - 1, 'back');
 });
@@ -1293,6 +1655,39 @@ maximizeWindow.addEventListener('click', () => {
   );
 });
 
+trafficMaximize.addEventListener('click', () => {
+  if (appWindow.classList.contains('is-closed') || appWindow.classList.contains('is-minimized')) {
+    restoreWindow();
+  }
+
+  const enteringFullscreen = !appWindow.classList.contains('is-fullscreen');
+  ['position', 'left', 'top', 'width', 'height', 'margin'].forEach((property) => {
+    appWindow.style.removeProperty(property);
+  });
+  appWindow.classList.toggle('is-fullscreen', enteringFullscreen);
+  maximizeWindow.setAttribute(
+    'aria-label',
+    enteringFullscreen ? 'Restore window' : 'Fullscreen window'
+  );
+});
+
+trafficClose.addEventListener('click', () => {
+  appWindow.classList.remove('is-fullscreen', 'is-minimized');
+  appWindow.classList.add('is-closed');
+  taskbarApp.classList.remove('is-active');
+});
+
+trafficMinimize.addEventListener('click', () => {
+  if (appWindow.classList.contains('is-closed')) {
+    restoreWindow();
+    return;
+  }
+
+  appWindow.classList.remove('is-closed');
+  appWindow.classList.toggle('is-minimized');
+  taskbarApp.classList.toggle('is-active', !appWindow.classList.contains('is-minimized'));
+});
+
 closeWindow.addEventListener('click', () => {
   appWindow.classList.remove('is-fullscreen', 'is-minimized');
   appWindow.classList.add('is-closed');
@@ -1302,13 +1697,28 @@ closeWindow.addEventListener('click', () => {
 
 taskbarApp.addEventListener('click', restoreWindow);
 desktopAppIcon.addEventListener('click', openLessonApp);
+courseFilesIcon.addEventListener('click', openCourseMap);
+document.querySelector('.nav-icon').addEventListener('click', () => showAppHome());
 longQuizIcon.addEventListener('click', openLongQuiz);
+quizIcon.addEventListener('click', openQuiz);
 androidBack.addEventListener('click', () => showSlide(activeSlide - 1, 'back'));
-androidHome.addEventListener('click', showAppHome);
+androidHome.addEventListener('click', () => showAppHome());
 androidOverview.addEventListener('click', restoreWindow);
 startLessonsButton.addEventListener('click', openLessonApp);
-openQuizButton.addEventListener('click', openLongQuiz);
+openQuizButton.addEventListener('click', openQuiz);
+openLongQuizButton.addEventListener('click', openLongQuiz);
 openCourseMapButton.addEventListener('click', openCourseMap);
+
+document.querySelectorAll('.unit-option').forEach((button) => {
+  button.addEventListener('click', () => {
+    selectedUnitQuiz.value = button.dataset.unit;
+    document.querySelectorAll('.unit-option').forEach((option) => {
+      const isSelected = option === button;
+      option.classList.toggle('is-selected', isSelected);
+      option.setAttribute('aria-pressed', String(isSelected));
+    });
+  });
+});
 
 if (window.location.hash === '#long-quiz') window.setTimeout(openLongQuiz, 0);
 

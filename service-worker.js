@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pathfit-1-v26';
+const CACHE_NAME = 'pathfit-1-v32';
 const APP_SHELL = [
   './',
   './index.html',

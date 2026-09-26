@@ -1057,7 +1057,7 @@ function createCheckpointSlides(lessonPages) {
 const lessonSlides = paginateSlides(slidesData);
 const slideSequence = [];
 const lessonUnits = [...new Set(lessonSlides.map((slide) => slide.unit))];
-const selectedUnitQuiz = { value: 'UNIT I' };
+const selectedUnit = { value: 'UNIT I' };
 
 lessonUnits.forEach((unit) => {
   const unitSlides = lessonSlides.filter((slide) => slide.unit === unit);
@@ -1177,10 +1177,10 @@ function getSlideImages(slideData) {
   return images.length === 2 ? images : [images[0] || defaultImages[0], images[1] || defaultImages[1]];
 }
 
-function buildSlides() {
+function buildSlides(deck = slideSequence) {
   slidesContainer.innerHTML = '';
 
-  slideSequence.forEach((slideData, index) => {
+  deck.forEach((slideData, index) => {
     const section = document.createElement('section');
     const bulletLength = slideData.bullets ? slideData.bullets.join(' ').length : 0;
     const density = bulletLength > 700 ? ' is-very-dense' : bulletLength > 480 ? ' is-dense' : '';
@@ -1320,16 +1320,16 @@ function showSlide(nextSlide, direction) {
 
 buildSlides();
 
-function getUnitQuizSlides(unitName = selectedUnitQuiz.value) {
+function getUnitQuizSlides(unitName = selectedUnit.value) {
   const unitSlides = lessonSlides.filter((slide) => slide.unit === unitName);
   const checkpointSlides = createCheckpointSlides(unitSlides);
   return checkpointSlides;
 }
 
-function showUnitQuiz(unitName = selectedUnitQuiz.value) {
+function showUnitQuiz(unitName = selectedUnit.value) {
   resetQuizResults();
   resetQuizDeckState();
-  selectedUnitQuiz.value = unitName;
+  selectedUnit.value = unitName;
   const unitQuizSlides = getUnitQuizSlides(unitName);
 
   if (!unitQuizSlides.length) return;
@@ -1473,12 +1473,13 @@ function openLongQuiz() {
 }
 
 function openQuiz() {
-  showUnitQuiz(selectedUnitQuiz.value);
+  showUnitQuiz(selectedUnit.value);
 }
 
 function openLessonApp() {
   resetQuizDeckState();
-  buildSlides();
+  const selectedUnitDeck = slideSequence.filter((slide) => slide.unit === selectedUnit.value);
+  buildSlides(selectedUnitDeck);
   lessonShell.classList.remove('is-home');
   lessonShell.scrollTop = 0;
   restoreWindow();
@@ -1711,7 +1712,7 @@ openCourseMapButton.addEventListener('click', openCourseMap);
 
 document.querySelectorAll('.unit-option').forEach((button) => {
   button.addEventListener('click', () => {
-    selectedUnitQuiz.value = button.dataset.unit;
+    selectedUnit.value = button.dataset.unit;
     document.querySelectorAll('.unit-option').forEach((option) => {
       const isSelected = option === button;
       option.classList.toggle('is-selected', isSelected);
